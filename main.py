@@ -33,6 +33,7 @@ error_LED = 22
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(error_LED, GPIO.OUT)
 
+save_path = '/home/pi/CAN-BUS-INTERFACE/Fault-Log'
 date_today = datetime.now()
 date = date_today.strftime("%m/%d/%Y")
 os.system("sudo /sbin/ip link set can0 down")
@@ -123,9 +124,9 @@ try:
             if overvoltage_fault:
                 GPIO.output(overvoltage_flag_LED, GPIO.HIGH)
                 if flag_counter == 0:
-                    outfile = open(date + 'fault log.txt','w')
+                    outfile = open(save_path + date + ' fault log.txt','w')
                 else:
-                    outfile = open(date + 'fault log.txt','a')
+                    outfile = open(save_path + date + ' fault log.txt','a')
                 outstr = c+s
                 print(outstr,file = outfile)
                 flag_counter += 1
@@ -136,9 +137,9 @@ try:
             if overtemp_fault:
                 GPIO.output(overtemp_flag_LED, GPIO.HIGH)
                 if flag_counter == 0:
-                    outfile = open(date + 'fault log.txt','w')
+                    outfile = open(save_path + date + ' fault log.txt','w')
                 else:
-                    outfile = open(date + 'fault log.txt','a')
+                    outfile = open(save_path + date + ' fault log.txt','a')
                 outstr = c+s
                 print(outstr,file = outfile)
                 flag_counter += 1
@@ -149,9 +150,9 @@ try:
             if error:
                 GPIO.output(error_LED, GPIO.HIGH)
                 if flag_counter == 0:
-                    outfile = open(date + 'fault log.txt','w')
+                    outfile = open(save_path + date + ' fault log.txt','w')
                 else:
-                    outfile = open(date + 'fault log.txt','a')
+                    outfile = open(save_path + date + ' fault log.txt','a')
                 outstr = c+s
                 print(outstr,file = outfile)
                 flag_counter += 1
@@ -159,7 +160,7 @@ try:
             else:
                 GPIO.output(error_LED, GPIO.LOW)
             
-            #print('\r {} Data:{}       '.format((c+s),identify_message_type(id)),end ='') # Print data and queue size on screen
+            print('\r {} Data:{}       '.format((c+s),identify_message_type(id)),end ='') # Print data and queue size on screen
             print(electrical_status_flags+" "+thermal_status_flags)
             print(overvoltage + " " +overtemp)
 except KeyboardInterrupt:
