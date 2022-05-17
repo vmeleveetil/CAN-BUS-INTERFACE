@@ -21,6 +21,7 @@ thermal_status_flags=""
 error = False
 flag_counter = 0
 
+GPIO.setwarnings(False)
 overvoltage_flag_LED = 17
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(overvoltage_flag_LED, GPIO.OUT)
@@ -33,9 +34,9 @@ error_LED = 22
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(error_LED, GPIO.OUT)
 
-save_path = '/home/pi/CAN-BUS-INTERFACE/Fault-Log'
+save_path = "/home/pi/CAN-BUS-INTERFACE/Fault-Log/"
 date_today = datetime.now()
-date = date_today.strftime("%m/%d/%Y")
+date = date_today.strftime("%m-%d-%Y")
 os.system("sudo /sbin/ip link set can0 down")
 print('\n\rReset CAN Link')
 print('\n\rBring up CAN0....')
@@ -70,17 +71,20 @@ def voltage_fault_check(overvoltage):
     global error
     if overvoltage == '00':
         overvoltage_fault = False
+        print("\nNot Active")
         error  = False
     elif overvoltage == '01':
         overvoltage_fault = True
+        print("\nWarning")
         error  = False
     elif overvoltage == '10':
         overvoltage_fault = True
+        print("\nAlarm")
         error  = False
     elif overvoltage == '11':
         error = True
         overvoltage_fault = True
-        print("ERROR")
+        print("\nERROR")
 def temp_fault_check(overtemp):
     global overtemp_fault
     global error
@@ -105,7 +109,7 @@ try:
             message = q.get()
             now = datetime.now()
             system_time = now.strftime("%H:%M:%S")
-            c = '{0} {1:f} {2:x} {3:x} '.format(system_time, message.timestamp, message.arbitration_id, message.dlc)
+            c = 'Timestamp: {0} {1:f} {2:x} {3:x} '.format(system_time, message.timestamp, message.arbitration_id, message.dlc)
             s=''
             id ='{0:x}'.format(message.arbitration_id)
             for i in range(message.dlc ):
@@ -160,9 +164,8 @@ try:
             else:
                 GPIO.output(error_LED, GPIO.LOW)
             
-            print('\r {} Data:{}       '.format((c+s),identify_message_type(id)),end ='') # Print data and queue size on screen
-            print(electrical_status_flags+" "+thermal_status_flags)
-            print(overvoltage + " " +overtemp)
+            print('\r {}'.format((c+s)),end ='') # Print data and queue size on screen
+            
 except KeyboardInterrupt:
 	#Catch keyboard interrupt
  	os.system("sudo /sbin/ip link set can0 down")
