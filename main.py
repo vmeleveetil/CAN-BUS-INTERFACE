@@ -118,12 +118,11 @@ try:
             if (identify_message_type(id) == "Electrical Data"):
                 electrical_status_flags = '{0:b}'.format(message.data[0])
                 overvoltage = electrical_status_flags[2] + electrical_status_flags[3]
+                voltage_fault_check(overvoltage)
             elif (identify_message_type(id) == "Thermal Data"):
                 thermal_status_flags = '{0:b}'.format(message.data[0])
                 overtemp = thermal_status_flags[4] + thermal_status_flags[5]
-
-            voltage_fault_check(overvoltage)
-            temp_fault_check(overtemp)
+                temp_fault_check(overtemp)
             
             if overvoltage_fault:
                 GPIO.output(overvoltage_flag_LED, GPIO.HIGH)
