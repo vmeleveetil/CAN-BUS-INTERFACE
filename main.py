@@ -22,15 +22,15 @@ error = False
 flag_counter = 0
 
 GPIO.setwarnings(False)
-overvoltage_flag_LED = 17
+overvoltage_flag_LED = 23
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(overvoltage_flag_LED, GPIO.OUT)
 
-overtemp_flag_LED = 5
+overtemp_flag_LED = 24
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(overtemp_flag_LED, GPIO.OUT)
 
-error_LED = 6
+error_LED = 16
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(error_LED, GPIO.OUT)
 
