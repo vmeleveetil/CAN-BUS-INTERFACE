@@ -30,7 +30,7 @@ overtemp_flag_LED = 27
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(overtemp_flag_LED, GPIO.OUT)
 
-error_LED = 22
+error_LED = 5
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(error_LED, GPIO.OUT)
 
