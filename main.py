@@ -36,7 +36,7 @@ GPIO.setup(error_LED, GPIO.OUT)
 
 script_running_LED = 6
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(error_LED, GPIO.OUT)
+GPIO.setup(script_running_LED, GPIO.OUT)
 GPIO.output(script_running_LED, GPIO.HIGH)
 
 save_path = "/home/pi/CAN-BUS-INTERFACE/Fault-Log/"
