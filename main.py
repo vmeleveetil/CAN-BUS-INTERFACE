@@ -12,13 +12,13 @@ import queue
 from threading import Thread
 from datetime import datetime
 
-overvoltage_fault = False 
+overvoltage_fault = True 
 electrical_status_flags=""
 overvoltage= ""
-overtemp_fault = False
+overtemp_fault = True
 overtemp = ""
 thermal_status_flags=""
-error = False
+error = True
 flag_counter = 0
 
 GPIO.setwarnings(False)
@@ -33,6 +33,11 @@ GPIO.setup(overtemp_flag_LED, GPIO.OUT)
 error_LED = 16
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(error_LED, GPIO.OUT)
+
+script_running_LED = 6
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(error_LED, GPIO.OUT)
+GPIO.output(script_running_LED, GPIO.HIGH)
 
 save_path = "/home/pi/CAN-BUS-INTERFACE/Fault-Log/"
 date_today = datetime.now()
@@ -70,36 +75,36 @@ def voltage_fault_check(overvoltage):
     global overvoltage_fault
     global error
     if overvoltage == '00':
-        overvoltage_fault = False
+        overvoltage_fault = True
         print("\nNot Active")
         error  = False
     elif overvoltage == '01':
-        overvoltage_fault = True
+        overvoltage_fault = False
         print("\nWarning")
         error  = False
     elif overvoltage == '10':
-        overvoltage_fault = True
+        overvoltage_fault = False
         print("\nAlarm")
         error  = False
     elif overvoltage == '11':
         error = True
-        overvoltage_fault = True
+        overvoltage_fault = False
         print("\nERROR")
 def temp_fault_check(overtemp):
     global overtemp_fault
     global error
     if overtemp == '00':
-        overtemp_fault = False
+        overtemp_fault = True
         error  = False
     elif overtemp == '01':
-        overtemp_fault = True
+        overtemp_fault = False
         error  = False
     elif overtemp == '10':
-        overtemp_fault = True
+        overtemp_fault = False
         error  = False
     elif overtemp == '11':
         error  = True
-        overtemp_fault = True
+        overtemp_fault = False
         print("ERROR")
 
 # Main loop
@@ -124,7 +129,7 @@ try:
                 overtemp = thermal_status_flags[4] + thermal_status_flags[5]
                 temp_fault_check(overtemp)
             
-            if overvoltage_fault:
+            if not (overvoltage_fault):
                 GPIO.output(overvoltage_flag_LED, GPIO.HIGH)
                 if flag_counter == 0:
                     outfile = open(save_path + date + ' fault log.txt','w')
@@ -137,7 +142,7 @@ try:
             else:
                 GPIO.output(overvoltage_flag_LED, GPIO.LOW)
                 
-            if overtemp_fault:
+            if not (overtemp_fault):
                 GPIO.output(overtemp_flag_LED, GPIO.HIGH)
                 if flag_counter == 0:
                     outfile = open(save_path + date + ' fault log.txt','w')
@@ -167,5 +172,6 @@ try:
             
 except KeyboardInterrupt:
 	#Catch keyboard interrupt
- 	os.system("sudo /sbin/ip link set can0 down")
- 	print('\n\rKeyboard interrtupt')
+    GPIO.output(script_running_LED, GPIO.LOW)
+    os.system("sudo /sbin/ip link set can0 down")
+    print('\n\rKeyboard interrtupt')
