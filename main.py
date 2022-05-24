@@ -95,17 +95,20 @@ def temp_fault_check(overtemp):
     global error
     if overtemp == '00':
         overtemp_fault = True
+        print("\nNot Active (Thermal)")
         error  = False
     elif overtemp == '01':
         overtemp_fault = False
+        print("\nWarning (Thermal)")
         error  = False
     elif overtemp == '10':
         overtemp_fault = False
+        print("\nAlarm (Thermal)")
         error  = False
     elif overtemp == '11':
         error  = True
         overtemp_fault = False
-        print("ERROR")
+        print("ERROR (Thermal)")
 
 # Main loop
 try:
